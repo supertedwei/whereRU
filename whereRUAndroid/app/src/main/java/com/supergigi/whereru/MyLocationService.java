@@ -1,5 +1,7 @@
 package com.supergigi.whereru;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,6 +11,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -25,6 +28,8 @@ public class MyLocationService extends Service implements
 
     protected GoogleApiClient mGoogleApiClient;
     protected LocationRequest mLocationRequest;
+
+    private static final int NOTIFICATION_ID = 1000;
 
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
@@ -51,10 +56,26 @@ public class MyLocationService extends Service implements
     public void onCreate() {
         Log.d(LOG_TAG, "onCreate()");
         super.onCreate();
-
+        startForeground();
         // Kick off the process of building a GoogleApiClient and requesting the LocationServices
         // API.
         buildGoogleApiClient();
+    }
+
+    private void startForeground() {
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setContentTitle("WhereRU");
+        builder.setTicker("WhereRU running");
+//        builder.setContentText("content text");
+        final Intent notificationIntent = new Intent(this, MainActivity.class);
+        notificationIntent.setAction(Intent.ACTION_MAIN);
+        notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        final PendingIntent pi = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        builder.setContentIntent(pi);
+        final Notification notification = builder.build();
+
+        startForeground(NOTIFICATION_ID, notification);
     }
 
     @Override
