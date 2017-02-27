@@ -2,6 +2,7 @@
 
 project.ext.playServiceVersion = "10.2.0"
 project.ext.androidSupportVersion = "25.2.0"
+project.ext.firebaseUiVersion = "1.2.0"
 
 buildscript {
     repositories {

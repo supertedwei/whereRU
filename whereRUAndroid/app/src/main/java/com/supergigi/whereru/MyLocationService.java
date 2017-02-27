@@ -43,7 +43,7 @@ public class MyLocationService extends Service implements
      * than this value.
      */
     public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
-            300000;
+            UPDATE_INTERVAL_IN_MILLISECONDS / 2;
 
     public MyLocationService() {
     }

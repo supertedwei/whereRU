@@ -35,7 +35,10 @@ dependencies {
     compile "com.google.firebase:firebase-auth:$playServiceVersion"
     compile "com.google.firebase:firebase-database:$playServiceVersion"
 
+    compile "com.firebaseui:firebase-ui-database:$firebaseUiVersion"
+
     compile 'com.afollestad.material-dialogs:core:0.9.1.0'
+    compile 'com.yqritc:recyclerview-flexibledivider:1.4.0'
 
 //    compile 'com.android.support:multidex:1.0.1'
     testCompile 'junit:junit:4.12'

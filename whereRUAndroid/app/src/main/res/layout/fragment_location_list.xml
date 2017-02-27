@@ -12,6 +12,13 @@
         android:layout_height="match_parent"
         app:layoutManager="LinearLayoutManager"
         tools:context="com.supergigi.passwordconciergeandroid.MainActivity"
-        tools:listitem="@layout/location_list_content"/>
+        tools:listitem="@layout/fragment_location_list_content"/>
+
+    <ProgressBar
+        android:id="@+id/spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTintMode="src_atop"
+        android:layout_gravity="center" />
 
 </FrameLayout>
