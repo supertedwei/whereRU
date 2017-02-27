@@ -20,12 +20,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.supergigi.whereru.location_list.LocationListFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -64,6 +64,11 @@ public class MainActivity extends AppCompatActivity
             ActivityCompat.requestPermissions( this, new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION  },
                     MY_PERMISSION_ACCESS_FINE_LOCATION );
         }
+
+        LocationListFragment fragment = LocationListFragment.newInstance();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_view, fragment)
+                .commit();
 
     }
 
