@@ -19,6 +19,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.supergigi.whereru.firebase.FbLocation;
+import com.supergigi.whereru.firebase.FirebaseUtil;
 
 public class MyLocationService extends Service implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -131,6 +133,11 @@ public class MyLocationService extends Service implements
     @Override
     public void onLocationChanged(Location location) {
         Log.i(LOG_TAG, "onLocationChanged - " + location);
+        FbLocation fbLocation = new FbLocation();
+        fbLocation.setLatitude(location.getLatitude());
+        fbLocation.setLongitude(location.getLongitude());
+        fbLocation.setAccuracy(location.getAccuracy());
+        FirebaseUtil.getDataLocation().push().setValue(fbLocation);
     }
 
     protected void startLocationUpdates() {
