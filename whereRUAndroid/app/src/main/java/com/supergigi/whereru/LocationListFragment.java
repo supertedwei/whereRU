@@ -15,6 +15,7 @@ import com.supergigi.whereru.firebase.BaseFirebaseRecyclerAdapter;
 import com.supergigi.whereru.firebase.FbLocation;
 import com.supergigi.whereru.firebase.FirebaseUtil;
 import com.supergigi.whereru.firebase.FirebaseViewHolder;
+import com.supergigi.whereru.util.TimeUtil;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 /**
@@ -127,7 +128,7 @@ public class LocationListFragment extends BaseFragment {
         public void setData(FbLocation data, LocationListFragment parent) {
             this.parent = parent;
             item = data;
-            addressView.setText(item.getAddress() + "\n" + item.getDateTimestamp().toString());
+            addressView.setText(item.getAddress() + "\n" + TimeUtil.toString(item.getLongTimestamp()));
 //            titleView.setText(item.getName());
         }
     }

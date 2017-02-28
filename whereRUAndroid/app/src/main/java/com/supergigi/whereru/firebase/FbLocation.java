@@ -2,8 +2,6 @@ package com.supergigi.whereru.firebase;
 
 import com.google.firebase.database.ServerValue;
 
-import java.util.Date;
-
 /**
  * Created by tedwei on 27/02/2017.
  */
@@ -44,12 +42,11 @@ public class FbLocation {
         return timestamp;
     }
 
-    public Date getDateTimestamp() {
+    public long getLongTimestamp() {
         try {
-            long time = Long.parseLong(timestamp.toString());
-            return new Date(time);
-        } catch (Exception ex) {
-            return null;
+            return Long.parseLong(timestamp.toString());
+        } catch (NumberFormatException ex) {
+            return 0;
         }
     }
 

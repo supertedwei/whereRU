@@ -1,6 +1,8 @@
 package com.supergigi.whereru;
 
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +18,7 @@ import com.supergigi.whereru.firebase.FbDeviceProfile;
 import com.supergigi.whereru.firebase.FbLocation;
 import com.supergigi.whereru.firebase.FirebaseUtil;
 import com.supergigi.whereru.firebase.FirebaseViewHolder;
+import com.supergigi.whereru.util.TimeUtil;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 
@@ -112,12 +115,17 @@ public class DeviceListFragment extends BaseFragment {
             mView = view;
             addressView = (TextView) view.findViewById(R.id.address);
 
-//            mView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    parent.addSubFragment(ViewTemplateFragment.newInstance(getFirebaseUrl()));
-//                }
-//            });
+            mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Uri gmmIntentUri = Uri.parse("geo:37.7749,-122.4194");
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    if (mapIntent.resolveActivity(parent.getActivity().getPackageManager()) != null) {
+                        parent.startActivity(mapIntent);
+                    }
+                }
+            });
         }
 
         public void setData(FbDeviceProfile data, DeviceListFragment parent) {
@@ -127,6 +135,7 @@ public class DeviceListFragment extends BaseFragment {
             buffer.append(item.getName());
             FbLocation fbLocation = item.getLastLocation();
             if (fbLocation != null) {
+                buffer.append("   (" + TimeUtil.toString(fbLocation.getLongTimestamp()) + ")");
                 buffer.append("\n" + fbLocation.getAddress());
             }
             addressView.setText(buffer.toString());
