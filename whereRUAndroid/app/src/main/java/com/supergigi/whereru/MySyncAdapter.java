@@ -10,8 +10,12 @@ import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncResult;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.supergigi.whereru.firebase.FbLocation;
+import com.supergigi.whereru.firebase.FirebaseUtil;
 
 /**
  * Handle the transfer of data between a server and an
@@ -38,26 +42,6 @@ public class MySyncAdapter extends AbstractThreadedSyncAdapter {
         mContentResolver = context.getContentResolver();
     }
 
-    /**
-     * Set up the sync adapter. This form of the
-     * constructor maintains compatibility with Android 3.0
-     * and later platform versions
-     */
-    @Deprecated
-    public MySyncAdapter(
-            Context context,
-            boolean autoInitialize,
-            boolean allowParallelSyncs) {
-        super(context, autoInitialize, allowParallelSyncs);
-        Log.d(LOG_TAG, "constructor called 2");
-        /*
-         * If your app uses a content resolver, get an instance of it
-         * from the incoming Context
-         */
-        mContentResolver = context.getContentResolver();
-
-    }
-
     /*
      * Specify the code you want to run in the sync adapter. The entire
      * sync adapter runs in a background thread, so you don't have to set
@@ -72,5 +56,14 @@ public class MySyncAdapter extends AbstractThreadedSyncAdapter {
             SyncResult syncResult) {
         Log.d(LOG_TAG, "onPerformSync() - " + Thread.currentThread().getName());
 
+        SyncLocation syncLocation = new SyncLocation(getContext());
+        Location location = syncLocation.getLocationBlocking();
+        Log.i(LOG_TAG, "retrieved location - " + location);
+        FbLocation fbLocation = new FbLocation();
+        fbLocation.setLatitude(location.getLatitude());
+        fbLocation.setLongitude(location.getLongitude());
+        fbLocation.setAccuracy(location.getAccuracy());
+        FirebaseUtil.getDataLocation().push().setValue(fbLocation);
     }
+
 }
