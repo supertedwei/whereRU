@@ -20,6 +20,8 @@ import com.supergigi.whereru.firebase.FirebaseUtil;
 import com.supergigi.whereru.firebase.FirebaseViewHolder;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
+import java.util.Date;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link LocationListFragment#newInstance} factory method to
@@ -110,14 +112,14 @@ public class LocationListFragment extends BaseFragment {
 
     public static class ViewHolder extends FirebaseViewHolder {
         public final View mView;
-        public final TextView titleView;
+        public final TextView addressView;
         public FbLocation item;
         LocationListFragment parent;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            titleView = (TextView) view.findViewById(R.id.title);
+            addressView = (TextView) view.findViewById(R.id.address);
 
 //            mView.setOnClickListener(new View.OnClickListener() {
 //                @Override
@@ -130,6 +132,7 @@ public class LocationListFragment extends BaseFragment {
         public void setData(FbLocation data, LocationListFragment parent) {
             this.parent = parent;
             item = data;
+            addressView.setText(item.getAddress() + "\n" + item.getDateTimestamp().toString());
 //            titleView.setText(item.getName());
         }
     }

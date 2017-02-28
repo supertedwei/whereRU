@@ -74,11 +74,13 @@ public class MySyncAdapter extends AbstractThreadedSyncAdapter {
         try {
             List<Address> list = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
             if (list.size() > 0) {
-                String address = list.get(0).toString();
-                Log.d(LOG_TAG, "address - " + address);
-                fbLocation.setAddress(address);
+                Address address = list.get(0);
+                String addressLine = address.getAddressLine(0);
+                Log.d(LOG_TAG, "addressLine - " + addressLine);
+                fbLocation.setAddress(addressLine);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
+            fbLocation.setAddress("" + e.getMessage());
             Log.e(LOG_TAG, "", e);
         }
 
