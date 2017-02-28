@@ -10,12 +10,17 @@ import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncResult;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.supergigi.whereru.firebase.FbLocation;
 import com.supergigi.whereru.firebase.FirebaseUtil;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Handle the transfer of data between a server and an
@@ -63,8 +68,24 @@ public class MySyncAdapter extends AbstractThreadedSyncAdapter {
         fbLocation.setLatitude(location.getLatitude());
         fbLocation.setLongitude(location.getLongitude());
         fbLocation.setAccuracy(location.getAccuracy());
+
+        Geocoder geocoder = new Geocoder(getContext());
+        fbLocation.setAddress("Unknown");
+        try {
+            List<Address> list = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            if (list.size() > 0) {
+                String address = list.get(0).toString();
+                Log.d(LOG_TAG, "address - " + address);
+                fbLocation.setAddress(address);
+            }
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "", e);
+        }
+
         FirebaseUtil.getUserLocationLog().push().setValue(fbLocation);
         FirebaseUtil.getUserLastLocation().setValue(fbLocation);
+
+
     }
 
 }

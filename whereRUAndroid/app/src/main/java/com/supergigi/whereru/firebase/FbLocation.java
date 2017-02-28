@@ -11,6 +11,7 @@ public class FbLocation {
     private double latitude;
     private double longitude;
     private float accuracy;
+    private String address;
     private Object timestamp = ServerValue.TIMESTAMP;
 
     public double getLatitude() {
@@ -41,4 +42,11 @@ public class FbLocation {
         return timestamp;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }
