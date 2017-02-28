@@ -118,11 +118,17 @@ public class DeviceListFragment extends BaseFragment {
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Uri gmmIntentUri = Uri.parse("geo:37.7749,-122.4194");
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    mapIntent.setPackage("com.google.android.apps.maps");
-                    if (mapIntent.resolveActivity(parent.getActivity().getPackageManager()) != null) {
-                        parent.startActivity(mapIntent);
+//                    Uri gmmIntentUri = Uri.parse("geo:37.7749,-122.4194");
+//                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+//                    mapIntent.setPackage("com.google.android.apps.maps");
+//                    if (mapIntent.resolveActivity(parent.getActivity().getPackageManager()) != null) {
+//                        parent.startActivity(mapIntent);
+//                    }
+
+                    FbLocation fbLocation = item.getLastLocation();
+                    if (fbLocation != null) {
+                        Intent intent = MapsMarkerActivity.createIntent(parent.getContext(), fbLocation.getLatitude(), fbLocation.getLongitude());
+                        parent.startActivity(intent);
                     }
                 }
             });

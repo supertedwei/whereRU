@@ -1,6 +1,7 @@
 package com.supergigi.whereru;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -117,12 +118,16 @@ public class LocationListFragment extends BaseFragment {
             mView = view;
             addressView = (TextView) view.findViewById(R.id.address);
 
-//            mView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    parent.addSubFragment(ViewTemplateFragment.newInstance(getFirebaseUrl()));
-//                }
-//            });
+            mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    FbLocation fbLocation = item;
+                    if (fbLocation != null) {
+                        Intent intent = MapsMarkerActivity.createIntent(parent.getContext(), fbLocation.getLatitude(), fbLocation.getLongitude());
+                        parent.startActivity(intent);
+                    }
+                }
+            });
         }
 
         public void setData(FbLocation data, LocationListFragment parent) {
