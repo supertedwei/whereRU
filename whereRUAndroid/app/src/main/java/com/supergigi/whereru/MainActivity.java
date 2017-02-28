@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity
 //    public static final String ACCOUNT = "default_account";
     // Sync interval constants
     public static final long SECONDS_PER_MINUTE = 60L;
-    public static final long SYNC_INTERVAL_IN_MINUTES = 60L;
+    public static final long SYNC_INTERVAL_IN_MINUTES = 10L;
     public static final long SYNC_INTERVAL = SYNC_INTERVAL_IN_MINUTES * SECONDS_PER_MINUTE;
 
     @Override
@@ -136,6 +136,7 @@ public class MainActivity extends AppCompatActivity
         /*
          * Turn on periodic syncing
          */
+        ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
         ContentResolver.addPeriodicSync(
                 mAccount,
                 AUTHORITY,
