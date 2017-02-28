@@ -1,8 +1,7 @@
-package com.supergigi.whereru.location_list;
+package com.supergigi.whereru;
 
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,15 +11,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.database.Query;
-import com.supergigi.whereru.BaseFragment;
-import com.supergigi.whereru.R;
 import com.supergigi.whereru.firebase.BaseFirebaseRecyclerAdapter;
 import com.supergigi.whereru.firebase.FbLocation;
 import com.supergigi.whereru.firebase.FirebaseUtil;
 import com.supergigi.whereru.firebase.FirebaseViewHolder;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
-
-import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -73,7 +68,7 @@ public class LocationListFragment extends BaseFragment {
                 FbLocation.class,
                 R.layout.fragment_location_list_content,
                 ViewHolder.class,
-                FirebaseUtil.getUserLocationLog());
+                FirebaseUtil.getDeviceLocationLog());
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getActivity()).build());
         addFirebaseRecyclerAdapter(adapter);

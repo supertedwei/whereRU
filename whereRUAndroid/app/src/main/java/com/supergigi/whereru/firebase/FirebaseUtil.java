@@ -13,8 +13,8 @@ public class FirebaseUtil {
 
     private static final String TAG = FirebaseUtil.class.getSimpleName();
 
-    private static final String FIREBASE_USER_LOCATION_LOG = "userLocationLog";
-    private static final String FIREBASE_USER_PROFILE = "userProfile";
+    private static final String FIREBASE_DEVICE_LOCATION_LOG = "deviceLocationLog";
+    private static final String FIREBASE_DEVICE_PROFILE = "deviceProfile";
 //    private static final String FIREBASE_DATA_LOCATION = "data/location";
 //    private static final String FIREBASE_AUTH_CONFIRM_EMAIL_SEND = "auth/confirm_email_sent";
 //    public static final String FIREBASE_DATA_ITEM_MASTER = "data/item/master";
@@ -28,20 +28,24 @@ public class FirebaseUtil {
 //        return rootRef.child(FIREBASE_USERS).child(user.getUid());
 //    }
 
-    public static final DatabaseReference getUserLocationLog() {
+    public static final DatabaseReference getDeviceLocationLog() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        return rootRef.child(FIREBASE_USER_LOCATION_LOG).child(user.getUid());
+        return rootRef.child(FIREBASE_DEVICE_LOCATION_LOG).child(user.getUid());
     }
 
-    public static final DatabaseReference getUserProfile() {
+    public static final DatabaseReference getDeviceProfile() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        return rootRef.child(FIREBASE_USER_PROFILE).child(user.getUid());
+        return rootRef.child(FIREBASE_DEVICE_PROFILE).child(user.getUid());
     }
 
-    public static final DatabaseReference getUserLastLocation() {
-        return getUserProfile().child("lastLocation");
+    public static final void updateDeviceProfile(String name) {
+        getDeviceProfile().child("name").setValue(name);
+    }
+
+    public static final DatabaseReference getDeviceLastLocation() {
+        return getDeviceProfile().child("lastLocation");
     }
 
 //

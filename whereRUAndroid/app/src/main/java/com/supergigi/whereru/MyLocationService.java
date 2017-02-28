@@ -138,8 +138,8 @@ public class MyLocationService extends Service implements
         fbLocation.setLatitude(location.getLatitude());
         fbLocation.setLongitude(location.getLongitude());
         fbLocation.setAccuracy(location.getAccuracy());
-        FirebaseUtil.getUserLocationLog().push().setValue(fbLocation);
-        FirebaseUtil.getUserLastLocation().setValue(fbLocation);
+        FirebaseUtil.getDeviceLocationLog().push().setValue(fbLocation);
+        FirebaseUtil.getDeviceLastLocation().setValue(fbLocation);
     }
 
     protected void startLocationUpdates() {
