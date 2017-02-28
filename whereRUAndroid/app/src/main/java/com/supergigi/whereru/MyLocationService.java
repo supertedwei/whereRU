@@ -22,6 +22,7 @@ import com.google.android.gms.location.LocationServices;
 import com.supergigi.whereru.firebase.FbLocation;
 import com.supergigi.whereru.firebase.FirebaseUtil;
 
+@Deprecated
 public class MyLocationService extends Service implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         LocationListener {

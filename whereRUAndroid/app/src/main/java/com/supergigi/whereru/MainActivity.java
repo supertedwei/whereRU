@@ -106,8 +106,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void doAfterLogin() {
-        Intent intent = new Intent(this, MyLocationService.class);
-        startService(intent);
+//        Intent intent = new Intent(this, MyLocationService.class);
+//        startService(intent);
+        MyLocationIntentService.startActionFineLocation(this);
     }
 
     @Override
