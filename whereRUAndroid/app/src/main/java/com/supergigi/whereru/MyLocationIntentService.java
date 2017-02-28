@@ -8,13 +8,7 @@ import android.content.Context;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-/**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * <p>
- * TODO: Customize class - update intent actions, extra parameters and static
- * helper methods.
- */
+@Deprecated
 public class MyLocationIntentService extends IntentService {
 
     private static final String LOG_TAG = MyLocationIntentService.class.getSimpleName();
