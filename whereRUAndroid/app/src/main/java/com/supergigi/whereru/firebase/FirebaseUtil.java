@@ -13,23 +13,37 @@ public class FirebaseUtil {
 
     private static final String TAG = FirebaseUtil.class.getSimpleName();
 
-    private static final String FIREBASE_USERS = "users";
-    private static final String FIREBASE_DATA_LOCATION = "data/location";
+    private static final String FIREBASE_USER_LOCATION_LOG = "userLocationLog";
+    private static final String FIREBASE_USER_PROFILE = "userProfile";
+//    private static final String FIREBASE_DATA_LOCATION = "data/location";
 //    private static final String FIREBASE_AUTH_CONFIRM_EMAIL_SEND = "auth/confirm_email_sent";
 //    public static final String FIREBASE_DATA_ITEM_MASTER = "data/item/master";
 //    public static final String FIREBASE_DATA_ITEM_DETAIL = "data/item/detail";
 //    public static final String FIREBASE_TEMPLATE_DETAIL = "data/template/detail";
 //    public static final String FIREBASE_TEMPLATE_DEFAULT_CREATED = "data/template/default/created";
 
-    public static final DatabaseReference getUserReference() {
+//    public static final DatabaseReference getUserReference() {
+//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+//        return rootRef.child(FIREBASE_USERS).child(user.getUid());
+//    }
+
+    public static final DatabaseReference getUserLocationLog() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        return rootRef.child(FIREBASE_USERS).child(user.getUid());
+        return rootRef.child(FIREBASE_USER_LOCATION_LOG).child(user.getUid());
     }
 
-    public static final DatabaseReference getDataLocation() {
-        return getUserReference().child(FIREBASE_DATA_LOCATION);
+    public static final DatabaseReference getUserProfile() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        return rootRef.child(FIREBASE_USER_PROFILE).child(user.getUid());
     }
+
+    public static final DatabaseReference getUserLastLocation() {
+        return getUserProfile().child("lastLocation");
+    }
+
 //
 //    public static final DatabaseReference getConfirmEmailSentRef() {
 //        return getUserReference().child(FIREBASE_AUTH_CONFIRM_EMAIL_SEND);

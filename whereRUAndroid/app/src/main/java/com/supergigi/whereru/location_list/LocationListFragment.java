@@ -71,7 +71,7 @@ public class LocationListFragment extends BaseFragment {
                 FbLocation.class,
                 R.layout.fragment_location_list_content,
                 ViewHolder.class,
-                FirebaseUtil.getDataLocation());
+                FirebaseUtil.getUserLocationLog());
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getActivity()).build());
         addFirebaseRecyclerAdapter(adapter);

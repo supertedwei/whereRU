@@ -143,19 +143,6 @@ public class MainActivity extends AppCompatActivity
                 Bundle.EMPTY,
                 SYNC_INTERVAL);
 
-        // Pass the settings flags by inserting them in a bundle
-        Bundle settingsBundle = new Bundle();
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        /*
-         * Request the sync for the default account, authority, and
-         * manual sync settings
-         */
-        ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
-
-
         LocationListFragment fragment = LocationListFragment.newInstance();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_view, fragment)

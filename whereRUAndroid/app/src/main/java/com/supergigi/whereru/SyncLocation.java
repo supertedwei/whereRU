@@ -26,7 +26,7 @@ public class SyncLocation implements GoogleApiClient.ConnectionCallbacks, Google
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3600000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
 
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
@@ -39,6 +39,8 @@ public class SyncLocation implements GoogleApiClient.ConnectionCallbacks, Google
     private LocationRequest mLocationRequest;
     private Location mCurrentLocation;
     private Context context;
+    private int countDown = 4;
+    private float accuracyThreadhold = 100;
 
     public SyncLocation(Context context) {
         this.context = context;
@@ -62,8 +64,14 @@ public class SyncLocation implements GoogleApiClient.ConnectionCallbacks, Google
 
     @Override
     public void onLocationChanged(Location location) {
+        Log.i(LOG_TAG, "onLocationChanged = " + countDown + "/" + location);
+        if (location.getAccuracy() > accuracyThreadhold && countDown > 0) {
+            countDown--;
+            return;
+        }
         if (location != null) {
             mCurrentLocation = location;
+            Log.i(LOG_TAG, "mCurrentLocation = " + mCurrentLocation);
         }
         synchronized (this) {
             notifyAll();

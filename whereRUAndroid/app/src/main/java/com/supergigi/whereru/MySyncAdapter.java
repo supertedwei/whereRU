@@ -63,7 +63,8 @@ public class MySyncAdapter extends AbstractThreadedSyncAdapter {
         fbLocation.setLatitude(location.getLatitude());
         fbLocation.setLongitude(location.getLongitude());
         fbLocation.setAccuracy(location.getAccuracy());
-        FirebaseUtil.getDataLocation().push().setValue(fbLocation);
+        FirebaseUtil.getUserLocationLog().push().setValue(fbLocation);
+        FirebaseUtil.getUserLastLocation().setValue(fbLocation);
     }
 
 }
