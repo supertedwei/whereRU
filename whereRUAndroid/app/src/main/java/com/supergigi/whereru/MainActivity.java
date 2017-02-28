@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity
                 Bundle.EMPTY,
                 SYNC_INTERVAL);
 
-        goSelectedMenu(R.id.nav_device_location_log);
+        goSelectedMenu(R.id.nav_device_list);
     }
 
     @Override
@@ -188,7 +188,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void goSelectedMenu(int id) {
-        if (id == R.id.nav_device_profile) {
+        if (id == R.id.nav_device_list) {
+            DeviceListFragment fragment = DeviceListFragment.newInstance();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_view, fragment)
+                    .commit();
+        } else if (id == R.id.nav_device_profile) {
             DeviceProfileFragment fragment = DeviceProfileFragment.newInstance();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_view, fragment)

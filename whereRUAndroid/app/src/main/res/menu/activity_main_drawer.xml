@@ -3,6 +3,9 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_device_list"
+            android:title="Device List" />
+        <item
             android:id="@+id/nav_device_location_log"
             android:title="Device Location Log" />
         <item
