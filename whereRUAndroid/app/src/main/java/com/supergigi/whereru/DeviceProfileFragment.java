@@ -73,6 +73,10 @@ public class DeviceProfileFragment extends BaseFragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 FbDeviceProfile fbDeviceProfile = dataSnapshot.getValue(FbDeviceProfile.class);
+                if (fbDeviceProfile == null) {
+                    fbDeviceProfile = new FbDeviceProfile();
+                    FirebaseUtil.getDeviceProfile().setValue(fbDeviceProfile);
+                }
                 nameView.setText(fbDeviceProfile.getName());
             }
 
