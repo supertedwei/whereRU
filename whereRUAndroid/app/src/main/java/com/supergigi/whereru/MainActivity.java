@@ -87,12 +87,6 @@ public class MainActivity extends AppCompatActivity
                     MY_PERMISSION_ACCESS_FINE_LOCATION );
         }
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) {
@@ -115,11 +109,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             doAfterLogin();
         }
-    }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 
     private void doAfterLogin() {
