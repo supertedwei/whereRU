@@ -38,6 +38,7 @@ dependencies {
     compile "com.google.android.gms:play-services-maps:$playServiceVersion"
     compile "com.google.firebase:firebase-auth:$playServiceVersion"
     compile "com.google.firebase:firebase-database:$playServiceVersion"
+    compile "com.google.firebase:firebase-messaging:$playServiceVersion"
 
     compile "com.firebaseui:firebase-ui-database:$firebaseUiVersion"
 

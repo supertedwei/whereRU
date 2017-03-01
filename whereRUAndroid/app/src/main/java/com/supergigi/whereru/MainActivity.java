@@ -27,6 +27,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.supergigi.whereru.firebase.FirebaseUtil;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -131,6 +133,12 @@ public class MainActivity extends AppCompatActivity
                 SYNC_INTERVAL);
 
         goSelectedMenu(R.id.nav_device_list);
+
+        String token = FirebaseInstanceId.getInstance().getToken();
+        if (token != null) {
+            FirebaseUtil.updateDeviceFcmToken(token);
+        }
+        Log.d(LOG_TAG, "FCM token = " + token);
     }
 
     @Override
