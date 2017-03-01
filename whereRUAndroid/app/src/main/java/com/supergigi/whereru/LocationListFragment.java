@@ -4,6 +4,7 @@ package com.supergigi.whereru;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,6 +74,9 @@ public class LocationListFragment extends BaseFragment {
                 FirebaseUtil.getDeviceLocationLog());
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getActivity()).build());
+        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
         addFirebaseRecyclerAdapter(adapter);
 //
 //        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
