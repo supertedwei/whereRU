@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -35,6 +36,7 @@ public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallba
     private String deviceId;
     private FbDeviceProfile fbDeviceProfile;
     private boolean isFirstRefresh = true;
+    private GoogleMap googleMap;
 
     public static final Intent createIntent(Context context) {
         return createIntent(context, FirebaseUtil.getUid());
@@ -65,6 +67,7 @@ public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallba
                     onFirstRefresh();
                 } else {
                     onRefresh();
+                    Toast.makeText(MapsMarkerActivity.this, "New Location Updated", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -105,6 +108,14 @@ public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallba
 
     private void onRefresh() {
         Log.d(LOG_TAG, "onRefresh()");
+        googleMap.clear();
+
+        // Add a marker in Sydney, Australia,
+        // and move the map's camera to the same location.
+        FbLocation lastLocation = fbDeviceProfile.getLastLocation();
+        LatLng location = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+        googleMap.addMarker(new MarkerOptions().position(location).title(lastLocation.getAddress()));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 18.0f));
     }
 
     /**
@@ -118,13 +129,8 @@ public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallba
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        // Add a marker in Sydney, Australia,
-        // and move the map's camera to the same location.
-        FbLocation lastLocation = fbDeviceProfile.getLastLocation();
-        LatLng location = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-        googleMap.addMarker(new MarkerOptions().position(location)
-                .title("Marker in Sydney"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 18.0f));
+        this.googleMap = googleMap;
+        onRefresh();
     }
 
 }
