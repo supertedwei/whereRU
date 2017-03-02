@@ -6,15 +6,15 @@ package com.supergigi.whereru.firebase;
 
 public class FbNotificationRequest {
 
-    public static FbNotificationRequest createLocationRequest(String deviceId) {
+    public static FbNotificationRequest createLocationRequest(String fcmToken) {
         FbNotificationRequest fbNotificationRequest = new FbNotificationRequest();
         fbNotificationRequest.locationRequest = new LocationRequest();
-        fbNotificationRequest.locationRequest.deviceId = deviceId;
+        fbNotificationRequest.locationRequest.fcmToken = fcmToken;
         return fbNotificationRequest;
     }
 
     public static class LocationRequest {
-        public String deviceId;
+        public String fcmToken;
     }
 
     public LocationRequest locationRequest;

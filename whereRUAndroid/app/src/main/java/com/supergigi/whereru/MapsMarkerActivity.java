@@ -86,7 +86,7 @@ public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallba
         int id = item.getItemId();
 
         if (id == R.id.action_get_location) {
-            FbNotificationRequest fbNotificationRequest = FbNotificationRequest.createLocationRequest(deviceId);
+            FbNotificationRequest fbNotificationRequest = FbNotificationRequest.createLocationRequest(fbDeviceProfile.getFcmToken());
             FirebaseUtil.pushNotificationRequest(fbNotificationRequest);
             return true;
         }

@@ -7,6 +7,7 @@ package com.supergigi.whereru.firebase;
 public class FbDeviceProfile {
 
     private String name;
+    private String fcmToken;
     private FbLocation lastLocation;
 
     public FbLocation getLastLocation() {
@@ -23,5 +24,13 @@ public class FbDeviceProfile {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 }
