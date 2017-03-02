@@ -1,9 +1,12 @@
 package com.supergigi.whereru;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.supergigi.whereru.firebase.FbDeviceProfile;
 import com.supergigi.whereru.firebase.FbLocation;
+import com.supergigi.whereru.firebase.FbNotificationRequest;
 import com.supergigi.whereru.firebase.FirebaseUtil;
 
 /**
@@ -69,6 +73,25 @@ public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallba
 
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.maps_marker, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_get_location) {
+            FbNotificationRequest fbNotificationRequest = FbNotificationRequest.createLocationRequest(deviceId);
+            FirebaseUtil.pushNotificationRequest(fbNotificationRequest);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void onFirstRefresh() {
