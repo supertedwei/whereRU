@@ -3,8 +3,7 @@ package com.supergigi.whereru;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -12,23 +11,34 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+import com.supergigi.whereru.firebase.FbDeviceProfile;
+import com.supergigi.whereru.firebase.FbLocation;
+import com.supergigi.whereru.firebase.FirebaseUtil;
 
 /**
  * Created by tedwei on 28/02/2017.
  */
 
-public class MapsMarkerActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallback {
 
-    private static final String EXTRA_LATITUDE = "EXTRA_LATITUDE";
-    private static final String EXTRA_LONGITUDE = "EXTRA_LONGITUDE";
+    private static final String LOG_TAG = MapsMarkerActivity.class.getSimpleName();
+    private static final String EXTRA_DEVICE_ID = "EXTRA_DEVICE_ID";
 
-    private double latitude;
-    private double longitude;
+    private String deviceId;
+    private FbDeviceProfile fbDeviceProfile;
+    private boolean isFirstRefresh = true;
 
-    public static final Intent createIntent(Context context, double latitude, double longitude) {
+    public static final Intent createIntent(Context context) {
+        return createIntent(context, FirebaseUtil.getUid());
+    }
+
+    public static final Intent createIntent(Context context, String deviceId) {
         Intent intent = new Intent(context, MapsMarkerActivity.class);
-        intent.putExtra(EXTRA_LATITUDE, latitude);
-        intent.putExtra(EXTRA_LONGITUDE, longitude);
+        intent.putExtra(EXTRA_DEVICE_ID, deviceId);
         return intent;
     }
 
@@ -39,14 +49,39 @@ public class MapsMarkerActivity extends AppCompatActivity implements OnMapReadyC
         setContentView(R.layout.activity_maps_marker);
 
         Intent intent = getIntent();
-        latitude = intent.getDoubleExtra(EXTRA_LATITUDE, 0.0);
-        longitude = intent.getDoubleExtra(EXTRA_LONGITUDE, 0.0);
+        deviceId = intent.getStringExtra(EXTRA_DEVICE_ID);
 
+        DatabaseReference databaseReference = FirebaseUtil.getDeviceProfile(deviceId);
+        addValueEventListener(databaseReference, new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                fbDeviceProfile = dataSnapshot.getValue(FbDeviceProfile.class);
+                if (isFirstRefresh) {
+                    isFirstRefresh = false;
+                    onFirstRefresh();
+                } else {
+                    onRefresh();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void onFirstRefresh() {
+        Log.d(LOG_TAG, "onFirstRefresh()");
         // Get the SupportMapFragment and request notification
         // when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+    private void onRefresh() {
+        Log.d(LOG_TAG, "onRefresh()");
     }
 
     /**
@@ -62,7 +97,8 @@ public class MapsMarkerActivity extends AppCompatActivity implements OnMapReadyC
     public void onMapReady(GoogleMap googleMap) {
         // Add a marker in Sydney, Australia,
         // and move the map's camera to the same location.
-        LatLng location = new LatLng(latitude, longitude);
+        FbLocation lastLocation = fbDeviceProfile.getLastLocation();
+        LatLng location = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
         googleMap.addMarker(new MarkerOptions().position(location)
                 .title("Marker in Sydney"));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 18.0f));

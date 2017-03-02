@@ -127,7 +127,7 @@ public class LocationListFragment extends BaseFragment {
                 public void onClick(View view) {
                     FbLocation fbLocation = item;
                     if (fbLocation != null) {
-                        Intent intent = MapsMarkerActivity.createIntent(parent.getContext(), fbLocation.getLatitude(), fbLocation.getLongitude());
+                        Intent intent = MapsMarkerActivity.createIntent(parent.getContext());
                         parent.startActivity(intent);
                     }
                 }

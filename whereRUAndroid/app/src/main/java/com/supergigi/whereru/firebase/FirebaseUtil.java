@@ -15,18 +15,7 @@ public class FirebaseUtil {
 
     private static final String FIREBASE_DEVICE_LOCATION_LOG = "deviceLocationLog";
     private static final String FIREBASE_DEVICE_PROFILE = "deviceProfile";
-//    private static final String FIREBASE_DATA_LOCATION = "data/location";
-//    private static final String FIREBASE_AUTH_CONFIRM_EMAIL_SEND = "auth/confirm_email_sent";
-//    public static final String FIREBASE_DATA_ITEM_MASTER = "data/item/master";
-//    public static final String FIREBASE_DATA_ITEM_DETAIL = "data/item/detail";
-//    public static final String FIREBASE_TEMPLATE_DETAIL = "data/template/detail";
-//    public static final String FIREBASE_TEMPLATE_DEFAULT_CREATED = "data/template/default/created";
-
-//    public static final DatabaseReference getUserReference() {
-//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-//        return rootRef.child(FIREBASE_USERS).child(user.getUid());
-//    }
+    private static final String FIREBASE_NOTIFICATION_REQUEST = "notificationRequest";
 
     public static final String getUid() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -40,6 +29,10 @@ public class FirebaseUtil {
 
     public static final DatabaseReference getDeviceProfile() {
         return getDeviceProfileList().child(getUid());
+    }
+
+    public static final DatabaseReference getDeviceProfile(String deviceId) {
+        return getDeviceProfileList().child(deviceId);
     }
 
     public static final DatabaseReference getDeviceProfileList() {
@@ -59,24 +52,9 @@ public class FirebaseUtil {
         return getDeviceProfile().child("lastLocation");
     }
 
-//
-//    public static final DatabaseReference getConfirmEmailSentRef() {
-//        return getUserReference().child(FIREBASE_AUTH_CONFIRM_EMAIL_SEND);
-//    }
-//
-//    public static final DatabaseReference getDataItemMaster() {
-//        return getUserReference().child(FIREBASE_DATA_ITEM_MASTER);
-//    }
-//
-//    public static final DatabaseReference getDataItemDetail() {
-//        return getUserReference().child(FIREBASE_DATA_ITEM_DETAIL);
-//    }
-//
-//    public static final DatabaseReference getTemplateDetail() {
-//        return getUserReference().child(FIREBASE_TEMPLATE_DETAIL);
-//    }
-//
-//    public static final DatabaseReference getTemplateDefaultCreated() {
-//        return getUserReference().child(FIREBASE_TEMPLATE_DEFAULT_CREATED);
-//    }
+    public static final void pushNotificationRequest(FbNotificationRequest fbNotificationRequest) {
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        rootRef.child(FIREBASE_NOTIFICATION_REQUEST).push().setValue(fbNotificationRequest);
+    }
+
 }

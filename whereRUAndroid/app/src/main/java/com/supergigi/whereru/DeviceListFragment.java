@@ -39,7 +39,6 @@ public class DeviceListFragment extends BaseFragment {
 
     private ProgressBar spinnerView;
 
-
     public DeviceListFragment() {
         // Required empty public constructor
     }
@@ -99,7 +98,7 @@ public class DeviceListFragment extends BaseFragment {
         @Override
         protected void populateViewHolder(ViewHolder viewHolder, FbDeviceProfile model, int position) {
             super.populateViewHolder(viewHolder, model, position);
-            viewHolder.setData(model, DeviceListFragment.this);
+            viewHolder.setData(getRef(position).getKey(), model, DeviceListFragment.this);
             spinnerView.setVisibility(View.GONE);
         }
     }
@@ -109,6 +108,7 @@ public class DeviceListFragment extends BaseFragment {
         public final TextView addressView;
         public FbDeviceProfile item;
         DeviceListFragment parent;
+        String deviceId;
 
         public ViewHolder(View view) {
             super(view);
@@ -127,15 +127,16 @@ public class DeviceListFragment extends BaseFragment {
 
                     FbLocation fbLocation = item.getLastLocation();
                     if (fbLocation != null) {
-                        Intent intent = MapsMarkerActivity.createIntent(parent.getContext(), fbLocation.getLatitude(), fbLocation.getLongitude());
+                        Intent intent = MapsMarkerActivity.createIntent(parent.getContext(), deviceId);
                         parent.startActivity(intent);
                     }
                 }
             });
         }
 
-        public void setData(FbDeviceProfile data, DeviceListFragment parent) {
+        public void setData(String deviceId, FbDeviceProfile data, DeviceListFragment parent) {
             this.parent = parent;
+            this.deviceId = deviceId;
             item = data;
             StringBuffer buffer = new StringBuffer();
             buffer.append(item.getName());
