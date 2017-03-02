@@ -108,10 +108,10 @@ public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallba
 
     private void onRefresh() {
         Log.d(LOG_TAG, "onRefresh()");
-        googleMap.clear();
 
-        // Add a marker in Sydney, Australia,
-        // and move the map's camera to the same location.
+        getSupportActionBar().setSubtitle(fbDeviceProfile.getName());
+
+        googleMap.clear();
         FbLocation lastLocation = fbDeviceProfile.getLastLocation();
         LatLng location = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
         googleMap.addMarker(new MarkerOptions().position(location).title(lastLocation.getAddress()));
