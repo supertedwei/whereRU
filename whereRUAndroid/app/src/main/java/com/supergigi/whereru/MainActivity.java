@@ -28,9 +28,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.supergigi.whereru.firebase.FirebaseUtil;
+import com.supergigi.whereru.util.SyncUtil;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -39,13 +37,6 @@ public class MainActivity extends AppCompatActivity
     private final int MY_PERMISSION_ACCESS_FINE_LOCATION = 100;
     private FirebaseAuth mAuth;
 
-    // Constants
-    // The authority for the sync adapter's content provider
-    public static final String AUTHORITY = "com.supergigi.whereru.datasync.provider";
-    // An account type, in the form of a domain name
-    public static final String ACCOUNT_TYPE = "com.supergigi.whereru.datasync";
-    // The account name
-    public static final String ACCOUNT = "myaccount";
     // Instance fields
     Account mAccount;
 
@@ -127,10 +118,10 @@ public class MainActivity extends AppCompatActivity
         /*
          * Turn on periodic syncing
          */
-        ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
+        ContentResolver.setSyncAutomatically(mAccount, Consts.AUTHORITY, true);
         ContentResolver.addPeriodicSync(
                 mAccount,
-                AUTHORITY,
+                Consts.AUTHORITY,
                 Bundle.EMPTY,
                 SYNC_INTERVAL);
 
@@ -165,12 +156,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_get_location) {
-            Bundle settingsBundle = new Bundle();
-//            settingsBundle.putBoolean(
-//                    ContentResolver.SYNC_EXTRAS_MANUAL, true);
-//            settingsBundle.putBoolean(
-//                    ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-            ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
+            SyncUtil.requestSync();
             return true;
         }
 
@@ -241,7 +227,7 @@ public class MainActivity extends AppCompatActivity
     public static Account CreateSyncAccount(Context context) {
         // Create the account type and default account
         Account newAccount = new Account(
-                ACCOUNT, ACCOUNT_TYPE);
+                Consts.ACCOUNT, Consts.ACCOUNT_TYPE);
         // Get an instance of the Android account manager
         AccountManager accountManager =
                 (AccountManager) context.getSystemService(
