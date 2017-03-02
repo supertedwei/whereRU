@@ -18,9 +18,11 @@ import android.util.Log;
 
 import com.supergigi.whereru.firebase.FbLocation;
 import com.supergigi.whereru.firebase.FirebaseUtil;
+import com.supergigi.whereru.geocoder.GeocoderException;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Handle the transfer of data between a server and an
@@ -69,15 +71,30 @@ public class MySyncAdapter extends AbstractThreadedSyncAdapter {
         fbLocation.setLongitude(location.getLongitude());
         fbLocation.setAccuracy(location.getAccuracy());
 
-        Geocoder geocoder = new Geocoder(getContext());
         fbLocation.setAddress("Unknown");
         try {
+            Geocoder geocoder = new Geocoder(getContext());
             List<Address> list = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
             if (list.size() > 0) {
                 Address address = list.get(0);
                 String addressLine = address.getAddressLine(0);
                 Log.d(LOG_TAG, "addressLine - " + addressLine);
                 fbLocation.setAddress(addressLine);
+            }
+        } catch (IOException ioex) {
+            Log.e(LOG_TAG, "", ioex);
+            com.supergigi.whereru.geocoder.Geocoder geocoder2 = new com.supergigi.whereru.geocoder.Geocoder(getContext(), Locale.getDefault());
+            try {
+                List<com.supergigi.whereru.geocoder.Address> list = geocoder2.getFromLocation(location.getLatitude(), location.getLongitude(), 1, true);
+                if (list.size() > 0) {
+                    com.supergigi.whereru.geocoder.Address address = list.get(0);
+                    String formattedAddress = address.getFormattedAddress();
+                    Log.d(LOG_TAG, "formattedAddress - " + formattedAddress);
+                    fbLocation.setAddress(formattedAddress);
+                }
+            } catch (GeocoderException e) {
+                fbLocation.setAddress("" + e.getMessage());
+                Log.e(LOG_TAG, "", e);
             }
         } catch (Exception e) {
             fbLocation.setAddress("" + e.getMessage());
@@ -86,8 +103,6 @@ public class MySyncAdapter extends AbstractThreadedSyncAdapter {
 
         FirebaseUtil.getDeviceLocationLog().push().setValue(fbLocation);
         FirebaseUtil.getDeviceLastLocation().setValue(fbLocation);
-
-
     }
 
 }

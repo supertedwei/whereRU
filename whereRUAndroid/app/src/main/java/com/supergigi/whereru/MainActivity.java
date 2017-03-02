@@ -12,6 +12,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -28,6 +29,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.supergigi.whereru.firebase.FirebaseUtil;
 
 public class MainActivity extends AppCompatActivity
@@ -134,11 +136,7 @@ public class MainActivity extends AppCompatActivity
 
         goSelectedMenu(R.id.nav_device_list);
 
-        String token = FirebaseInstanceId.getInstance().getToken();
-        if (token != null) {
-            FirebaseUtil.updateDeviceFcmToken(token);
-        }
-        Log.d(LOG_TAG, "FCM token = " + token);
+//        FirebaseMessaging.getInstance().subscribeToTopic(FirebaseUtil.getUid());
     }
 
     @Override
@@ -151,27 +149,33 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_get_location) {
+            Bundle settingsBundle = new Bundle();
+//            settingsBundle.putBoolean(
+//                    ContentResolver.SYNC_EXTRAS_MANUAL, true);
+//            settingsBundle.putBoolean(
+//                    ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+            ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override

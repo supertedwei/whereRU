@@ -28,15 +28,18 @@ public class FirebaseUtil {
 //        return rootRef.child(FIREBASE_USERS).child(user.getUid());
 //    }
 
-    public static final DatabaseReference getDeviceLocationLog() {
+    public static final String getUid() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        return user.getUid();
+    }
+
+    public static final DatabaseReference getDeviceLocationLog() {
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        return rootRef.child(FIREBASE_DEVICE_LOCATION_LOG).child(user.getUid());
+        return rootRef.child(FIREBASE_DEVICE_LOCATION_LOG).child(getUid());
     }
 
     public static final DatabaseReference getDeviceProfile() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        return getDeviceProfileList().child(user.getUid());
+        return getDeviceProfileList().child(getUid());
     }
 
     public static final DatabaseReference getDeviceProfileList() {
