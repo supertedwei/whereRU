@@ -9,6 +9,7 @@ public class FbDeviceProfile {
     private String name;
     private String fcmToken;
     private FbLocation lastLocation;
+    private boolean requestingLocation = false;
 
     public FbLocation getLastLocation() {
         return lastLocation;
@@ -32,5 +33,13 @@ public class FbDeviceProfile {
 
     public void setFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;
+    }
+
+    public boolean isRequestingLocation() {
+        return requestingLocation;
+    }
+
+    public void setRequestingLocation(boolean requestingLocation) {
+        this.requestingLocation = requestingLocation;
     }
 }

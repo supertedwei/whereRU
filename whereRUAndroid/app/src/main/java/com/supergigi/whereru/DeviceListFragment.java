@@ -104,9 +104,10 @@ public class DeviceListFragment extends BaseFragment {
     }
 
     public static class ViewHolder extends FirebaseViewHolder {
-        public final View mView;
-        public final TextView addressView;
-        public FbDeviceProfile item;
+        private final View mView;
+        private final TextView addressView;
+        private final View spinnerView;
+        private FbDeviceProfile item;
         DeviceListFragment parent;
         String deviceId;
 
@@ -114,6 +115,7 @@ public class DeviceListFragment extends BaseFragment {
             super(view);
             mView = view;
             addressView = (TextView) view.findViewById(R.id.address);
+            spinnerView = view.findViewById(R.id.spinner);
 
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -146,6 +148,11 @@ public class DeviceListFragment extends BaseFragment {
                 buffer.append("\n" + fbLocation.getAddress());
             }
             addressView.setText(buffer.toString());
+            if (data.isRequestingLocation()) {
+                spinnerView.setVisibility(View.VISIBLE);
+            } else {
+                spinnerView.setVisibility(View.INVISIBLE);
+            }
         }
     }
 

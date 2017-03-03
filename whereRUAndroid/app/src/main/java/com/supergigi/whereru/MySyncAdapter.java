@@ -63,6 +63,22 @@ public class MySyncAdapter extends AbstractThreadedSyncAdapter {
             SyncResult syncResult) {
         Log.d(LOG_TAG, "onPerformSync() - " + Thread.currentThread().getName());
 
+        try {
+            FirebaseUtil.updateRequestingLocation(true);
+
+            internalOnPerformSync(account, extras, authority, provider, syncResult);
+        } finally {
+            FirebaseUtil.updateRequestingLocation(false);
+        }
+    }
+
+    private void internalOnPerformSync(
+            Account account,
+            Bundle extras,
+            String authority,
+            ContentProviderClient provider,
+            SyncResult syncResult) {
+
         SyncLocation syncLocation = new SyncLocation(getContext());
         Location location = syncLocation.getLocationBlocking();
         Log.i(LOG_TAG, "retrieved location - " + location);

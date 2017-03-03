@@ -48,6 +48,10 @@ public class FirebaseUtil {
         getDeviceProfile().child("fcmToken").setValue(token);
     }
 
+    public static final void updateRequestingLocation(boolean data) {
+        getDeviceProfile().child("requestingLocation").setValue(data);
+    }
+
     public static final DatabaseReference getDeviceLastLocation() {
         return getDeviceProfile().child("lastLocation");
     }
