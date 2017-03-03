@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -23,6 +25,7 @@ import com.supergigi.whereru.firebase.FbDeviceProfile;
 import com.supergigi.whereru.firebase.FbLocation;
 import com.supergigi.whereru.firebase.FbNotificationRequest;
 import com.supergigi.whereru.firebase.FirebaseUtil;
+import com.supergigi.whereru.util.TimeUtil;
 
 /**
  * Created by tedwei on 28/02/2017.
@@ -37,6 +40,8 @@ public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallba
     private FbDeviceProfile fbDeviceProfile;
     private boolean isFirstRefresh = true;
     private GoogleMap googleMap;
+    private TextView addressView;
+    private View spinnerView;
 
     public static final Intent createIntent(Context context) {
         return createIntent(context, FirebaseUtil.getUid());
@@ -53,6 +58,9 @@ public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallba
         super.onCreate(savedInstanceState);
         // Retrieve the content view that renders the map.
         setContentView(R.layout.activity_maps_marker);
+
+        addressView = (TextView) findViewById(R.id.address);
+        spinnerView = findViewById(R.id.spinner);
 
         Intent intent = getIntent();
         deviceId = intent.getStringExtra(EXTRA_DEVICE_ID);
@@ -116,6 +124,18 @@ public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallba
         LatLng location = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
         googleMap.addMarker(new MarkerOptions().position(location).title(lastLocation.getAddress()));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 18.0f));
+
+        StringBuffer buffer = new StringBuffer();
+        if (lastLocation != null) {
+            buffer.append("   (" + TimeUtil.toString(lastLocation.getLongTimestamp()) + ")");
+            buffer.append("\n" + lastLocation.getAccAddress());
+        }
+        addressView.setText(buffer.toString());
+        if (fbDeviceProfile.isRequestingLocation()) {
+            spinnerView.setVisibility(View.VISIBLE);
+        } else {
+            spinnerView.setVisibility(View.INVISIBLE);
+        }
     }
 
     /**
