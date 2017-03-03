@@ -145,7 +145,7 @@ public class DeviceListFragment extends BaseFragment {
             FbLocation fbLocation = item.getLastLocation();
             if (fbLocation != null) {
                 buffer.append("   (" + TimeUtil.toString(fbLocation.getLongTimestamp()) + ")");
-                buffer.append("\n" + fbLocation.getAddress());
+                buffer.append("\n" + fbLocation.getAccAddress());
             }
             addressView.setText(buffer.toString());
             if (data.isRequestingLocation()) {

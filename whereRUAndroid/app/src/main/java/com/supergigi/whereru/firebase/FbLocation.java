@@ -1,5 +1,6 @@
 package com.supergigi.whereru.firebase;
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ServerValue;
 
 /**
@@ -42,6 +43,15 @@ public class FbLocation {
         return timestamp;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    @Exclude
     public long getLongTimestamp() {
         try {
             return Long.parseLong(timestamp.toString());
@@ -50,11 +60,8 @@ public class FbLocation {
         }
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
+    @Exclude
+    public String getAccAddress() {
+        return "[" + ((int)accuracy) + "] " + address;
     }
 }

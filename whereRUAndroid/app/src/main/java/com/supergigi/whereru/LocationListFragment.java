@@ -137,7 +137,7 @@ public class LocationListFragment extends BaseFragment {
         public void setData(FbLocation data, LocationListFragment parent) {
             this.parent = parent;
             item = data;
-            addressView.setText(item.getAddress() + "\n" + TimeUtil.toString(item.getLongTimestamp()));
+            addressView.setText(item.getAccAddress() + "\n" + TimeUtil.toString(item.getLongTimestamp()));
 //            titleView.setText(item.getName());
         }
     }
