@@ -28,6 +28,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.supergigi.whereru.firebase.FirebaseUtil;
 import com.supergigi.whereru.util.SyncUtil;
 
 public class MainActivity extends AppCompatActivity
@@ -127,7 +129,8 @@ public class MainActivity extends AppCompatActivity
 
         goSelectedMenu(R.id.nav_device_list);
 
-//        FirebaseMessaging.getInstance().subscribeToTopic(FirebaseUtil.getUid());
+        String token = FirebaseInstanceId.getInstance().getToken();
+        FirebaseUtil.updateDeviceFcmToken(token);
     }
 
     @Override

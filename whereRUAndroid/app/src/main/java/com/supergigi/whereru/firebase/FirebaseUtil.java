@@ -1,5 +1,7 @@
 package com.supergigi.whereru.firebase;
 
+import android.util.Log;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -11,7 +13,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class FirebaseUtil {
 
-    private static final String TAG = FirebaseUtil.class.getSimpleName();
+    private static final String LOG_TAG = FirebaseUtil.class.getSimpleName();
 
     private static final String FIREBASE_DEVICE_LOCATION_LOG = "deviceLocationLog";
     private static final String FIREBASE_DEVICE_PROFILE = "deviceProfile";
@@ -19,6 +21,9 @@ public class FirebaseUtil {
 
     public static final String getUid() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            return null;
+        }
         return user.getUid();
     }
 
@@ -28,6 +33,10 @@ public class FirebaseUtil {
     }
 
     public static final DatabaseReference getDeviceProfile() {
+        String uid = getUid();
+        if (uid == null) {
+            return null;
+        }
         return getDeviceProfileList().child(getUid());
     }
 
@@ -45,7 +54,15 @@ public class FirebaseUtil {
     }
 
     public static final void updateDeviceFcmToken(String token) {
-        getDeviceProfile().child("fcmToken").setValue(token);
+        Log.d(LOG_TAG, "fcmToken = " + token);
+        if (token == null) {
+            return;
+        }
+        DatabaseReference databaseReference = getDeviceProfile();
+        if (databaseReference == null) {
+            return;
+        }
+        databaseReference.child("fcmToken").setValue(token);
     }
 
     public static final void updateRequestingLocation(boolean data) {
