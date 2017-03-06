@@ -28,8 +28,12 @@ public class FirebaseUtil {
     }
 
     public static final DatabaseReference getDeviceLocationLog() {
+        return getDeviceLocationLog(getUid());
+    }
+
+    public static final DatabaseReference getDeviceLocationLog(String deviceId) {
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        return rootRef.child(FIREBASE_DEVICE_LOCATION_LOG).child(getUid());
+        return rootRef.child(FIREBASE_DEVICE_LOCATION_LOG).child(deviceId);
     }
 
     public static final DatabaseReference getDeviceProfile() {

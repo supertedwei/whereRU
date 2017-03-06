@@ -3,6 +3,12 @@ package com.supergigi.whereru;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -15,17 +21,21 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.supergigi.whereru.firebase.FbDeviceProfile;
 import com.supergigi.whereru.firebase.FbLocation;
 import com.supergigi.whereru.firebase.FbNotificationRequest;
 import com.supergigi.whereru.firebase.FirebaseUtil;
 import com.supergigi.whereru.util.TimeUtil;
+
+import java.util.ArrayList;
 
 /**
  * Created by tedwei on 28/02/2017.
@@ -35,9 +45,11 @@ public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallba
 
     private static final String LOG_TAG = MapsMarkerActivity.class.getSimpleName();
     private static final String EXTRA_DEVICE_ID = "EXTRA_DEVICE_ID";
+    private static final int MAX_HISTORY_COUNT = 30;
 
     private String deviceId;
     private FbDeviceProfile fbDeviceProfile;
+    ArrayList<FbLocation> historyLocations = new ArrayList<FbLocation>();
     private boolean isFirstRefresh = true;
     private GoogleMap googleMap;
     private TextView addressView;
@@ -84,6 +96,7 @@ public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallba
 
             }
         });
+
     }
 
     @Override
@@ -136,6 +149,17 @@ public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallba
         } else {
             spinnerView.setVisibility(View.INVISIBLE);
         }
+
+        // display history location
+        int i = 0;
+        for (FbLocation hisFbLocation : historyLocations) {
+            int alpha = ((255 - 30) / MAX_HISTORY_COUNT * i) + 30;
+            LatLng hisLocation = new LatLng(hisFbLocation.getLatitude(), hisFbLocation.getLongitude());
+            googleMap.addMarker(new MarkerOptions().position(hisLocation)
+                    .icon(BitmapDescriptorFactory.fromBitmap(createDot(alpha)))
+            );
+            i++;
+        }
     }
 
     /**
@@ -151,6 +175,40 @@ public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallba
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         onRefresh();
+
+        DatabaseReference locationLogRef = FirebaseUtil.getDeviceLocationLog(deviceId);
+        Query lastLogQuery = locationLogRef.limitToLast(MAX_HISTORY_COUNT);
+        addValueEventListener(lastLogQuery, new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<FbLocation> locations = new ArrayList<>();
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    locations.add(child.getValue(FbLocation.class));
+                }
+                historyLocations = locations;
+                onRefresh();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private Bitmap createDot(int alpha) {
+        Log.d(LOG_TAG, "alpha : " + alpha);
+        int width = 20;
+        int height = width;
+
+        Bitmap dotBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(dotBitmap);
+        Paint paint = new Paint();
+        paint.setColor(Color.BLUE);
+        paint.setAlpha(alpha);
+        canvas.drawCircle(width/2, height/2, width/2-1, paint);
+
+        return dotBitmap;
     }
 
 }
