@@ -135,15 +135,10 @@ public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallba
         googleMap.clear();
         FbLocation lastLocation = fbDeviceProfile.getLastLocation();
         LatLng location = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-        googleMap.addMarker(new MarkerOptions().position(location).title(lastLocation.getAddress()));
+        googleMap.addMarker(new MarkerOptions().position(location).title(lastLocation.getAccAddress()));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 18.0f));
 
-        StringBuffer buffer = new StringBuffer();
-        if (lastLocation != null) {
-            buffer.append("   (" + TimeUtil.toString(lastLocation.getLongTimestamp()) + ")");
-            buffer.append("\n" + lastLocation.getAccAddress());
-        }
-        addressView.setText(buffer.toString());
+        addressView.setText(getString(lastLocation));
         if (fbDeviceProfile.isRequestingLocation()) {
             spinnerView.setVisibility(View.VISIBLE);
         } else {
@@ -153,13 +148,25 @@ public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallba
         // display history location
         int i = 0;
         for (FbLocation hisFbLocation : historyLocations) {
-            int alpha = ((255 - 30) / MAX_HISTORY_COUNT * i) + 30;
+            int alpha = (255 / MAX_HISTORY_COUNT * i);
             LatLng hisLocation = new LatLng(hisFbLocation.getLatitude(), hisFbLocation.getLongitude());
-            googleMap.addMarker(new MarkerOptions().position(hisLocation)
+            Log.d(LOG_TAG, "alpha : " + alpha + "/" + getString(hisFbLocation));
+            googleMap.addMarker(new MarkerOptions()
+                    .position(hisLocation)
+                    .title(TimeUtil.toString(hisFbLocation.getLongTimestamp()))
                     .icon(BitmapDescriptorFactory.fromBitmap(createDot(alpha)))
             );
             i++;
         }
+    }
+
+    private String getString(FbLocation location) {
+        StringBuffer buffer = new StringBuffer();
+        if (location != null) {
+            buffer.append("   (" + TimeUtil.toString(location.getLongTimestamp()) + ")");
+            buffer.append("\n" + location.getAccAddress());
+        }
+        return buffer.toString();
     }
 
     /**
@@ -197,7 +204,6 @@ public class MapsMarkerActivity extends BaseActivity implements OnMapReadyCallba
     }
 
     private Bitmap createDot(int alpha) {
-        Log.d(LOG_TAG, "alpha : " + alpha);
         int width = 20;
         int height = width;
 
