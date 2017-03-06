@@ -1,7 +1,10 @@
 package com.supergigi.whereru;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,15 +14,25 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofenceStatusCodes;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+
+import java.util.ArrayList;
+
+import static com.google.android.gms.internal.zzt.TAG;
 
 /**
  * Created by tedwei on 28/02/2017.
  */
 
-public class SyncLocation implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class SyncLocation implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
 
     private static final String LOG_TAG = SyncLocation.class.getSimpleName();
 
@@ -76,7 +89,6 @@ public class SyncLocation implements GoogleApiClient.ConnectionCallbacks, Google
         synchronized (this) {
             notifyAll();
         }
-        stop();
     }
 
     protected void startLocationUpdates() {
@@ -153,7 +165,151 @@ public class SyncLocation implements GoogleApiClient.ConnectionCallbacks, Google
                 e.printStackTrace();
             }
         }
+
+        setResyncGeofenseBlocking(mCurrentLocation);
+
+        stop();
         return mCurrentLocation;
     }
 
+    public void setResyncGeofenseBlocking(Location center) {
+        removeGeofencesBlocking();
+        addGeofencesBlocking(center);
+    }
+
+    private void addGeofencesBlocking(Location center) {
+        Log.d(LOG_TAG, "Add geofences");
+        final Object syncObject = new Object();
+        try {
+            LocationServices.GeofencingApi.addGeofences(
+                    mGoogleApiClient,
+                    // The GeofenceRequest object.
+                    getGeofencingRequest(center),
+                    // A pending intent that that is reused when calling removeGeofences(). This
+                    // pending intent is used to generate an intent when a matched geofence
+                    // transition is observed.
+                    getGeofencePendingIntent()
+            ).setResultCallback(new ResultCallback<Status>() {
+                @Override
+                public void onResult(@NonNull Status status) {
+                    if (status.isSuccess()) {
+                        Log.d(LOG_TAG, "[addGeofences:onResult] : success - " + status);
+                    } else {
+                        // Get the status code for the error and log it using a user-friendly message.
+                        String errorMessage = getErrorString(context, status.getStatusCode());
+                        Log.e(LOG_TAG, "[addGeofences:onResult] : fail - " + errorMessage);
+                    }
+
+                    synchronized (syncObject) {
+                        syncObject.notifyAll();
+                    }
+                }
+            }); // Result processed in onResult().
+
+            synchronized (syncObject) {
+                syncObject.wait();
+            }
+        } catch (SecurityException securityException) {
+            Log.e(LOG_TAG, "", securityException);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private GeofencingRequest getGeofencingRequest(Location center) {
+        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+
+        // The INITIAL_TRIGGER_ENTER flag indicates that geofencing service should trigger a
+        // GEOFENCE_TRANSITION_ENTER notification when the geofence is added and if the device
+        // is already inside that geofence.
+        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+
+        // Add the geofences to be monitored by geofencing service.
+        builder.addGeofences(getGeofenceList(center));
+
+        // Return a GeofencingRequest.
+        return builder.build();
+    }
+
+    private ArrayList<Geofence> getGeofenceList(Location center) {
+        ArrayList<Geofence> geofenceList = new ArrayList<>();
+        geofenceList.add(new Geofence.Builder()
+                // Set the request ID of the geofence. This is a string to identify this
+                // geofence.
+                .setRequestId("Resync Geofence")
+
+                // Set the circular region of this geofence.
+                .setCircularRegion(
+                        center.getLatitude(),
+                        center.getLongitude(),
+                        10000        // in meter
+                )
+
+                // Set the expiration duration of the geofence. This geofence gets automatically
+                // removed after this period of time.
+                .setExpirationDuration(24L * 60L * 60L * 1000L)
+
+                // Set the transition types of interest. Alerts are only generated for these
+                // transition. We track entry and exit transitions in this sample.
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT)
+
+                // Create the geofence.
+                .build());
+        return geofenceList;
+    }
+
+    private void removeGeofencesBlocking() {
+        try {
+            Log.d(LOG_TAG, "Remove geofences");
+            final Object syncObject = new Object();
+            LocationServices.GeofencingApi.removeGeofences(
+                    mGoogleApiClient,
+                    // This is the same pending intent that was used in addGeofences().
+                    getGeofencePendingIntent()
+            ).setResultCallback(new ResultCallback<Status>() {
+                @Override
+                public void onResult(@NonNull Status status) {
+                    if (status.isSuccess()) {
+                        Log.d(LOG_TAG, "[removeGeofences:onResult] : success - " + status);
+                    } else {
+                        // Get the status code for the error and log it using a user-friendly message.
+                        String errorMessage = getErrorString(context, status.getStatusCode());
+                        Log.e(LOG_TAG, "[removeGeofences:onResult] : fail - " + errorMessage);
+                    }
+                    synchronized (syncObject) {
+                        syncObject.notifyAll();
+                    }
+                }
+            }); // Result processed in onResult().
+
+            synchronized (syncObject) {
+                syncObject.wait();
+            }
+        } catch (SecurityException securityException) {
+            Log.e(LOG_TAG, "", securityException);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private PendingIntent getGeofencePendingIntent() {
+        Intent intent = new Intent(context, GeofenceTransitionsIntentService.class);
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
+        // addGeofences() and removeGeofences().
+        return PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private static String getErrorString(Context context, int errorCode) {
+        Resources mResources = context.getResources();
+        switch (errorCode) {
+            case GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE:
+                return "GEOFENCE_NOT_AVAILABLE";
+            case GeofenceStatusCodes.GEOFENCE_TOO_MANY_GEOFENCES:
+                return "GEOFENCE_TOO_MANY_GEOFENCES";
+            case GeofenceStatusCodes.GEOFENCE_TOO_MANY_PENDING_INTENTS:
+                return "GEOFENCE_TOO_MANY_PENDING_INTENTS";
+            default:
+                return "unknown_geofence_error";
+        }
+    }
 }
