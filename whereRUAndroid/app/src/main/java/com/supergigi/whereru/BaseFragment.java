@@ -7,7 +7,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.List;
 abstract public class BaseFragment extends Fragment {
 
     private class ManagedFirebaseObserver {
-        DatabaseReference databaseReference;
+        Query query;
         ChildEventListener childEventListener;
         ValueEventListener valueEventListener;
     }
@@ -42,19 +42,19 @@ abstract public class BaseFragment extends Fragment {
         }
     }
 
-    final protected void addChildEventListener(DatabaseReference ref, ChildEventListener listener) {
+    final protected void addChildEventListener(Query query, ChildEventListener listener) {
         ManagedFirebaseObserver observer = new ManagedFirebaseObserver();
-        observer.databaseReference = ref;
+        observer.query = query;
         observer.childEventListener = listener;
-        ref.addChildEventListener(listener);
+        query.addChildEventListener(listener);
         fbObserversList.add(observer);
     }
 
-    final protected void addValueEventListener(DatabaseReference ref, ValueEventListener listener) {
+    final protected void addValueEventListener(Query query, ValueEventListener listener) {
         ManagedFirebaseObserver observer = new ManagedFirebaseObserver();
-        observer.databaseReference = ref;
+        observer.query = query;
         observer.valueEventListener = listener;
-        ref.addValueEventListener(listener);
+        query.addValueEventListener(listener);
         fbObserversList.add(observer);
     }
 
@@ -63,8 +63,8 @@ abstract public class BaseFragment extends Fragment {
     }
 
 
-    final protected void addListenerForSingleValueEvent(DatabaseReference ref, ValueEventListener listener) {
-        ref.addListenerForSingleValueEvent(listener);
+    final protected void addListenerForSingleValueEvent(Query query, ValueEventListener listener) {
+        query.addListenerForSingleValueEvent(listener);
     }
 
     @Override
@@ -73,9 +73,9 @@ abstract public class BaseFragment extends Fragment {
 
         for (ManagedFirebaseObserver observer : fbObserversList) {
             if (observer.childEventListener != null) {
-                observer.databaseReference.removeEventListener(observer.childEventListener);
+                observer.query.removeEventListener(observer.childEventListener);
             } else if (observer.valueEventListener != null) {
-                observer.databaseReference.removeEventListener(observer.valueEventListener);
+                observer.query.removeEventListener(observer.valueEventListener);
             }
         }
         fbObserversList.clear();

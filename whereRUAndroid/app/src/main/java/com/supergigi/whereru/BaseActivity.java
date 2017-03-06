@@ -4,7 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.List;
 abstract public class BaseActivity extends AppCompatActivity {
 
     private class ManagedFirebaseObserver {
-        DatabaseReference databaseReference;
+        Query query;
         ChildEventListener childEventListener;
         ValueEventListener valueEventListener;
     }
@@ -25,11 +25,11 @@ abstract public class BaseActivity extends AppCompatActivity {
     private List<ManagedFirebaseObserver> fbObserversList = new ArrayList<>();
     private List<FirebaseRecyclerAdapter> fbRecyclerAdapterList = new ArrayList<>();
 
-    final protected void addValueEventListener(DatabaseReference ref, ValueEventListener listener) {
+    final protected void addValueEventListener(Query query, ValueEventListener listener) {
         ManagedFirebaseObserver observer = new ManagedFirebaseObserver();
-        observer.databaseReference = ref;
+        observer.query = query;
         observer.valueEventListener = listener;
-        ref.addValueEventListener(listener);
+        query.addValueEventListener(listener);
         fbObserversList.add(observer);
     }
 
@@ -39,9 +39,9 @@ abstract public class BaseActivity extends AppCompatActivity {
 
         for (ManagedFirebaseObserver observer : fbObserversList) {
             if (observer.childEventListener != null) {
-                observer.databaseReference.removeEventListener(observer.childEventListener);
+                observer.query.removeEventListener(observer.childEventListener);
             } else if (observer.valueEventListener != null) {
-                observer.databaseReference.removeEventListener(observer.valueEventListener);
+                observer.query.removeEventListener(observer.valueEventListener);
             }
         }
         fbObserversList.clear();
