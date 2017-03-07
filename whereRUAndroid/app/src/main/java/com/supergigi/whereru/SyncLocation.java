@@ -242,7 +242,7 @@ public class SyncLocation implements GoogleApiClient.ConnectionCallbacks, Google
                 .setCircularRegion(
                         center.getLatitude(),
                         center.getLongitude(),
-                        10000        // in meter
+                        1000        // in meter
                 )
 
                 // Set the expiration duration of the geofence. This geofence gets automatically
