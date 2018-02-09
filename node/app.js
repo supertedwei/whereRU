@@ -44,9 +44,15 @@ function listenForNotificationRequests() {
 };
 
 function sendNotificationToDevice(registrationToken, payload, callback) {
+    // Set the message as high priority and have it expire after 24 hours.
+    var options = {
+        priority: "high",
+        timeToLive: 60 * 60 * 24
+    };
+
     // Send a message to the device corresponding to the provided
     // registration token.
-    firebase.messaging().sendToDevice(registrationToken, payload).then(function (response) {
+    firebase.messaging().sendToDevice(registrationToken, payload, options).then(function (response) {
         // See the MessagingDevicesResponse reference documentation for
         // the contents of response.
         console.log("Successfully sent message:", response);
