@@ -13,17 +13,17 @@ ref = firebase.database().ref();
 
 function listenForNotificationRequests() {
     var requests = ref.child('notificationRequest');
-    requests.on('child_added', function(requestSnapshot) {
+    requests.on('child_added', function (requestSnapshot) {
         var fcmToken = requestSnapshot.val().locationRequest.fcmToken;
         console.log("fcmToken = " + fcmToken);
         sendNotificationToDevice(
-            fcmToken, 
+            fcmToken,
             {
                 data: {
                     command: "requestLocation"
                 }
-            }, 
-            function(response) {
+            },
+            function (response) {
                 requestSnapshot.ref.remove();
             }
         );
@@ -35,7 +35,7 @@ function listenForNotificationRequests() {
         //     requestSnapshot.ref.remove();
         //   }
         // );
-    }, function(error) {
+    }, function (error) {
         console.error(error);
     });
 };
@@ -43,12 +43,12 @@ function listenForNotificationRequests() {
 function sendNotificationToDevice(registrationToken, payload, callback) {
     // Send a message to the device corresponding to the provided
     // registration token.
-    firebase.messaging().sendToDevice(registrationToken, payload).then(function(response) {
+    firebase.messaging().sendToDevice(registrationToken, payload).then(function (response) {
         // See the MessagingDevicesResponse reference documentation for
         // the contents of response.
         console.log("Successfully sent message:", response);
         callback(response);
-    }).catch(function(error) {
+    }).catch(function (error) {
         console.log("Error sending message:", error);
     });
 }
