@@ -21,7 +21,10 @@ function listenForNotificationRequests() {
             {
                 data: {
                     command: "requestLocation"
-                }
+                },
+                "android": {
+                    "priority": "normal"
+                },
             },
             function (response) {
                 requestSnapshot.ref.remove();
